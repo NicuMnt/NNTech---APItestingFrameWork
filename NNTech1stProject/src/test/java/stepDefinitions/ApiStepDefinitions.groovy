@@ -1,11 +1,9 @@
 package stepDefinitions
 
-import com.google.gson.JsonObject
 import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.restassured.response.Response
 import io.cucumber.java.en.When
-import static org.junit.Assert.assertEquals
 import static io.restassured.RestAssured.given
 import groovy.json.JsonSlurper
 import io.restassured.http.ContentType
@@ -19,6 +17,9 @@ class ApiStepDefinitions {
     def AccID
     def requestBody = [:] //Empty Map initialization bcs groovy might not understand exactly what this is
     def loginRequestBody = [:]
+    def EmailActivationBody = [:]
+    def EmailValidationbody = [:]
+    String accessToken
     @Given("I have a valid set of prerequisites")
     def PrepareDynamicalySetofData () {
 
@@ -122,7 +123,7 @@ class ApiStepDefinitions {
         def json = new JsonSlurper().parseText(response.getBody().asString())
 
 
-        def accessToken = json.access_token
+        accessToken = json.access_token
         println "Stored access token: ${accessToken}"
 
 
@@ -130,6 +131,65 @@ class ApiStepDefinitions {
         def cookies = response.getCookies()
         def csrfToken = cookies['csrftoken']
         println "Stored CSRF token: ${csrfToken}"
+
+    }
+
+    @Then("I Prepare body for Email activation request")
+    def prepareEmailActivationBody () {
+
+        EmailActivationBody = [
+
+                email : requestBody.email
+
+        ]
+
+
+    }
+
+    @Then("I send the Post request for email activation")
+    def PreparePostRequestForMailActivation () {
+
+        def JsonEmailActivation = JsonOutput.toJson(EmailActivationBody)
+
+        response = given()
+                .contentType(ContentType.JSON)
+                .body(JsonEmailActivation)
+                .when()
+                .post("https://awakening2.eu/send-activation-email/")
+
+
+    }
+
+    @Then("I prepare validation Email body")
+    def PreparebodyForMailValidation () {
+        def random = new Random()
+        def activationcode = "123456"
+
+        EmailValidationbody = [
+
+                email          : requestBody.email,
+                activation_code: activationcode
+
+
+        ]
+    }
+    @Then("I send the Post request for email validation")
+    def PreparePostRequestForMailValidation () {
+
+
+
+        def JsonEmailValidation = JsonOutput.toJson(EmailValidationbody)
+
+        response = given()
+                .contentType(ContentType.JSON)
+                .header("Authorization", "Bearer ${accessToken}")
+                .body(JsonEmailValidation)
+                .when()
+                .post("https://awakening2.eu/validate-activation-code/")
+
+
+
+        println "Response Body: ${response.getBody().asString()}"
 
     }
 
