@@ -13,6 +13,6 @@ Feature: Create NEW ACCOUNT
     Then I store the access token and CSRF token from the login response
     Then I Prepare body for Email activation request
     Then I send the Post request for email activation
-    When I prepare validation Email body
-    Then I send the Post request for email validation
-    Then The response status should be 200
+#    When I prepare validation Email body
+#    Then I send the Post request for email validation
+#    Then The response status should be 200

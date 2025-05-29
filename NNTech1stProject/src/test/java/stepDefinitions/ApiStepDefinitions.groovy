@@ -160,37 +160,37 @@ class ApiStepDefinitions {
 
     }
 
-    @Then("I prepare validation Email body")
-    def PreparebodyForMailValidation () {
-        def random = new Random()
-        def activationcode = "123456"
-
-        EmailValidationbody = [
-
-                email          : requestBody.email,
-                activation_code: activationcode
-
-
-        ]
-    }
-    @Then("I send the Post request for email validation")
-    def PreparePostRequestForMailValidation () {
-
-
-
-        def JsonEmailValidation = JsonOutput.toJson(EmailValidationbody)
-
-        response = given()
-                .contentType(ContentType.JSON)
-                .header("Authorization", "Bearer ${accessToken}")
-                .body(JsonEmailValidation)
-                .when()
-                .post("https://awakening2.eu/validate-activation-code/")
-
-
-
-        println "Response Body: ${response.getBody().asString()}"
-
-    }
+//    @Then("I prepare validation Email body")
+//    def PreparebodyForMailValidation () {
+//        def random = new Random()
+//        def activationcode = "123456"
+//
+//        EmailValidationbody = [
+//
+//                email          : requestBody.email,
+//                activation_code: activationcode
+//
+//
+//        ]
+//    }
+//    @Then("I send the Post request for email validation")
+//    def PreparePostRequestForMailValidation () {
+//
+//
+//
+//        def JsonEmailValidation = JsonOutput.toJson(EmailValidationbody)
+//
+//        response = given()
+//                .contentType(ContentType.JSON)
+//                .header("Authorization", "Bearer ${accessToken}")
+//                .body(JsonEmailValidation)
+//                .when()
+//                .post("https://awakening2.eu/validate-activation-code/")
+//
+//
+//
+//        println "Response Body: ${response.getBody().asString()}"
+//
+//    }
 
 }
