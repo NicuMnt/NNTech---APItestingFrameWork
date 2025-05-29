@@ -15,3 +15,4 @@ Feature: Create NEW ACCOUNT
     Then I send the Post request for email activation
     When I prepare validation Email body
     Then I send the Post request for email validation
+    Then The response status should be 200

@@ -9,7 +9,7 @@ import groovy.json.JsonSlurper
 import io.restassured.http.ContentType
 import groovy.json.JsonOutput
 
-
+// multipart - file uploading
 
 class ApiStepDefinitions {
 
@@ -192,6 +192,5 @@ class ApiStepDefinitions {
         println "Response Body: ${response.getBody().asString()}"
 
     }
-
 
 }
