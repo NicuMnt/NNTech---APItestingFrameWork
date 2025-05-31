@@ -23,7 +23,7 @@ public class Hooks {
         config = new Properties();
         config.load(new FileInputStream(configPath));
 
-        // Set RestAssured baseURI
+
         RestAssured.baseURI = config.getProperty("baseUrl");
 
         request = RestAssured
