@@ -8,6 +8,8 @@ import static io.restassured.RestAssured.given
 import groovy.json.JsonSlurper
 import io.restassured.http.ContentType
 import groovy.json.JsonOutput
+import context.TestContext
+import hooks.Hooks
 
 // multipart - file uploading
 
@@ -19,7 +21,7 @@ class ApiStepDefinitions {
     def loginRequestBody = [:]
     def EmailActivationBody = [:]
     def EmailValidationbody = [:]
-    String accessToken
+
     @Given("I have a valid set of prerequisites")
     def PrepareDynamicalySetofData () {
 
@@ -69,9 +71,8 @@ class ApiStepDefinitions {
     def StoreAccId () {
         // Parses the HTTP response body (which is a JSON string) into a Groovy map-like object (JSON object)
         def json = new JsonSlurper().parseText(response.getBody().asString())
-        accID = json.id
-        println "Stored account ID: $accID"
-
+        Hooks.context.accountId = json.id
+        println "Stored account ID: ${Hooks.context.accountId}"
 
     }
 
@@ -123,14 +124,14 @@ class ApiStepDefinitions {
         def json = new JsonSlurper().parseText(response.getBody().asString())
 
 
-        accessToken = json.access_token
-        println "Stored access token: ${accessToken}"
+        Hooks.context.token = json.acces_token
+        println "Stored access token: ${Hooks.context.token}"
 
 
 
-        def cookies = response.getCookies()
-        def csrfToken = cookies['csrftoken']
-        println "Stored CSRF token: ${csrfToken}"
+        def cookies = Hooks.context.response.getCookies()
+        Hooks.context.csrfToken = cookies['csrftoken']
+        println "Stored CSRF token: ${Hooks.context.csrfToken}"
 
     }
 
