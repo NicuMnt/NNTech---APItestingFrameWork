@@ -41,7 +41,6 @@ class ApiStepDefinitions {
                 social_id: socialId,
                 securitycode: securityCode
 
-
         ]
 
     }
@@ -50,15 +49,24 @@ class ApiStepDefinitions {
 
         String jsonBody = JsonOutput.toJson(requestBody)
 
+        println "----- Sending POST Request -----"
+        println "Endpoint: /accounts/create/"
+        println "Method: POST"
+        println "Body: ${jsonBody}"
+        println" --------------------------------------------- "
+
+
         response = given()
         .contentType(ContentType.JSON)
         .body(jsonBody)
         .when()
         .post("https://awakening2.eu/accounts/create/")
 
-        println "Sending request with body: ${jsonBody}"
-        println "Status: ${response.getStatusCode()}"
+
+        println "Status code: ${response.getStatusCode()}"
+        println" --------------------------------------------- "
         println "Body: ${response.getBody().asString()}"
+
 
     }
     @Then("The response status should be 200")
@@ -72,7 +80,9 @@ class ApiStepDefinitions {
         // Parses the HTTP response body (which is a JSON string) into a Groovy map-like object (JSON object)
         def json = new JsonSlurper().parseText(response.getBody().asString())
         Hooks.context.accountId = json.id
+        println" --------------------------------------------- "
         println "Stored account ID: ${Hooks.context.accountId}"
+        println" --------------------------------------------- "
 
     }
 
@@ -89,6 +99,7 @@ class ApiStepDefinitions {
         ]
 
         println "Prepared Login body :  ${loginRequestBody}"
+        println" --------------------------------------------- "
 
 
     }
@@ -98,7 +109,12 @@ class ApiStepDefinitions {
 
         String JsonLoginBody = JsonOutput.toJson(loginRequestBody)
 
-        response = given()
+        println "----- Sending POST Request -----"
+        println "Endpoint: /accounts/login/"
+        println "Method: POST"
+        println "Body: ${JsonLoginBody}"
+
+        Hooks.context.response = given()
                 .contentType(ContentType.JSON)
                 .body(JsonLoginBody)
                 .when()
@@ -106,32 +122,44 @@ class ApiStepDefinitions {
 
 
 
-        println "Sending login request with body: ${JsonLoginBody}"
+
+        println" --------------------------------------------- "
         println "Login response status: ${response.getStatusCode()}"
+        println" --------------------------------------------- "
         println "Login response body: ${response.getBody().asString()}"
+
 
 
     }
 
-    @Then("The login response status should be 200")
+    @Then("The login response status should be 201")
     def checkLoginStatus() {
-        assert response.getStatusCode() == 200 : "Expected 200, got ${response.getStatusCode()}"
+
+        assert response.getStatusCode() == 201 : "Expected 201, got ${response.getStatusCode()}"
+
     }
 
     @Then("I store the access token and CSRF token from the login response")
     def storeAuthTokens() {
 
-        def json = new JsonSlurper().parseText(response.getBody().asString())
+        def json = new JsonSlurper().parseText(Hooks.context.response.getBody().asString())
 
 
-        Hooks.context.token = json.acces_token
+        Hooks.context.token = json.access_token
+        println" --------------------------------------------- "
         println "Stored access token: ${Hooks.context.token}"
 
 
+        if (response == null) {
+            println "Response is null. Cannot extract cookies."
+            return
+        }
 
         def cookies = Hooks.context.response.getCookies()
         Hooks.context.csrfToken = cookies['csrftoken']
+        println" --------------------------------------------- "
         println "Stored CSRF token: ${Hooks.context.csrfToken}"
+        println" --------------------------------------------- "
 
     }
 
@@ -152,14 +180,32 @@ class ApiStepDefinitions {
 
         def JsonEmailActivation = JsonOutput.toJson(EmailActivationBody)
 
+        println "----- Sending POST Request -----"
+        println "Endpoint: /send-activation-email/"
+        println "Method: POST"
+        println "Body: ${JsonEmailActivation}"
+        println" --------------------------------------------- "
+
         response = given()
                 .contentType(ContentType.JSON)
                 .body(JsonEmailActivation)
                 .when()
                 .post("https://awakening2.eu/send-activation-email/")
 
+        println "Status code: ${response.getStatusCode()}"
+        println" --------------------------------------------- "
+        println "Body: ${response.getBody().asString()}"
+
 
     }
+
+    @Then("The login response status should be 200")
+    def checkLoginStatus200() {
+
+        assert response.getStatusCode() == 200: "Expected 200, got ${response.getStatusCode()}"
+    }
+
+
 
 //    @Then("I prepare validation Email body")
 //    def PreparebodyForMailValidation () {

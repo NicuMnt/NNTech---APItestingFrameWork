@@ -2,8 +2,10 @@ package hooks;
 
 import context.TestContext;
 import io.cucumber.java.Before;
+import io.cucumber.java.After;
 import io.restassured.RestAssured;
 import io.restassured.specification.RequestSpecification;
+import io.cucumber.java.Scenario;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -34,7 +36,16 @@ public class Hooks {
         System.out.println("Environment: " + env);
         System.out.println("Base URI: " + RestAssured.baseURI);
     }
-}
+
+    @After
+    public void tearDown(Scenario scenario) {
+
+        if (scenario.isFailed()) {
+            System.out.println("Scenario failed: " + scenario.getName());
 
 
+    }
+        context = null;
+        }
 
+            }
