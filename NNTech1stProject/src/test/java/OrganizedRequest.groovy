@@ -1,7 +1,7 @@
 import io.restassured.http.ContentType
 import static io.restassured.RestAssured.given
 import io.restassured.response.Response
-
+// need overloading method for all request POST/DELETE/GET
 class OrganizedRequest {
     String baseURL
     OrganizedRequest(String baseURL) {
